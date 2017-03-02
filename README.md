@@ -25,8 +25,6 @@ In order to use this extension, add following settings in settings.py
 * `ELASTICSTATS_INDEX`
 * `ELASTICSTATS_TYPE` 
 
-Note: this extension by default sends custom stats you will be collecting under `custom_stats` or `ELASTICSTATS_KEY`. To send all the scrapy stats, set `ELASTICSTATS_ALL` in your settings to `True`. 
-
 
 ## Features
 

@@ -1,4 +1,5 @@
 from datetime import datetime
+import hashlib
 import logging
 
 from elasticsearch import Elasticsearch
@@ -50,22 +51,21 @@ class ElasticStatsSender(object):
 
         index = self.settings.get('ELASTICSTATS_INDEX')
         doc_type = self.settings.get('ELASTICSTATS_TYPE')
-        all_stats = self.settings.get_bool('ELASTICSTATS_ALL')
 
         es = self._get_es_instance()
         stats['spider'] = spider.name
         stats['created_at'] = datetime.utcnow().isoformat()
-        stats_dict = self.stats.get_stats()
 
-        if not all_stats:
-            custom_key = self.settings.get('ELASTICSTATS_KEY', 'custom_stats')
-            stats['stats'] = stats_dict.get(custom_key)
-        else:
-            stats['stats'] = stats_dict
-            stats['spider_stats'] = self.stats.get_stats(spider)
+        stats['stats'] = self.stats.get_stats()
+        stats['spider_stats'] = self.stats.get_stats(spider)
 
+        # convert datetime objects into str
+        for key, value in stats['stats'].iteritems():
+            if isinstance(value, datetime):
+                stats['stats'][key] = value.isoformat()
         try:
-            return es.create(index=index, doc_type=doc_type, body=stats)
+            doc_id = hashlib.sha1(stats['created_at']).hexdigest()
+            return es.create(index=index, doc_type=doc_type, id=doc_id, body=stats)
         except Exception as e:
             logger.error('caught error while trying to send stats to elastic'
                          'Exception: {}'.format(e.message))
