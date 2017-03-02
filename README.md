@@ -25,6 +25,15 @@ In order to use this extension, add following settings in settings.py
 * `ELASTICSTATS_INDEX`
 * `ELASTICSTATS_TYPE` 
 
+After updating these settings, add the following line in you settings.py extensions setting like this
+
+```python
+
+EXTENSIONS = {
+    'elasticstats.ElasticStatsSender': 900
+}
+
+```
 
 ## Features
 
