@@ -57,7 +57,7 @@ class ElasticStatsSender(object):
         stats['created_at'] = datetime.utcnow().isoformat()
 
         stats['stats'] = self.stats.get_stats()
-        stats['spider_stats'] = self.stats.get_stats(spider)
+        # stats['spider_stats'] = self.stats.get_stats(spider)
 
         # convert datetime objects into str
         for key, value in stats['stats'].iteritems():
