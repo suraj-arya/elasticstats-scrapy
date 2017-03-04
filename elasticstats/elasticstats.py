@@ -63,6 +63,14 @@ class ElasticStatsSender(object):
         for key, value in stats['stats'].iteritems():
             if isinstance(value, datetime):
                 stats['stats'][key] = value.isoformat()
+
+            # replace / with _ in keys in default stats
+            # for better use
+            if '/' in key:
+                del stats[key]
+                key.replace('/', '_')
+                stats[key] = value
+
         try:
             doc_id = hashlib.sha1(stats['created_at']).hexdigest()
             return es.create(index=index, doc_type=doc_type, id=doc_id, body=stats)
