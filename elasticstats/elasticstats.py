@@ -67,7 +67,7 @@ class ElasticStatsSender(object):
             # for better dictionary keys
             if '/' in key:
                 del stats[key]
-                key.replace('/', '_')
+                key = key.replace('/', '_')
                 stats[key] = value
 
         data['stats'] = stats
