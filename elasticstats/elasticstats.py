@@ -47,33 +47,34 @@ class ElasticStatsSender(object):
         return o
 
     def spider_closed(self, spider):
-        stats = {}
+        data = {}
 
         index = self.settings.get('ELASTICSTATS_INDEX')
         doc_type = self.settings.get('ELASTICSTATS_TYPE')
 
         es = self._get_es_instance()
-        stats['spider'] = spider.name
-        stats['created_at'] = datetime.utcnow().isoformat()
+        data['spider'] = spider.name
+        data['created_at'] = datetime.utcnow().isoformat()
 
-        stats['stats'] = self.stats.get_stats()
-        # stats['spider_stats'] = self.stats.get_stats(spider)
+        stats = self.stats.get_stats()
 
         # convert datetime objects into str
-        for key, value in stats['stats'].iteritems():
+        for key, value in stats.iteritems():
             if isinstance(value, datetime):
-                stats['stats'][key] = value.isoformat()
+                stats[key] = value.isoformat()
 
             # replace / with _ in keys in default stats
-            # for better use
+            # for better dictionary keys
             if '/' in key:
                 del stats[key]
                 key.replace('/', '_')
                 stats[key] = value
 
+        data['stats'] = stats
+
         try:
             doc_id = hashlib.sha1(stats['created_at']).hexdigest()
-            return es.create(index=index, doc_type=doc_type, id=doc_id, body=stats)
+            return es.create(index=index, doc_type=doc_type, id=doc_id, body=data)
         except Exception as e:
             logger.error('caught error while trying to send stats to elastic'
                          'Exception: {}'.format(e.message))
