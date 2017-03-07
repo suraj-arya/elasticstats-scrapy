@@ -73,9 +73,9 @@ class ElasticStatsSender(object):
         data['stats'] = stats
 
         try:
-            doc_id = hashlib.sha1(stats['created_at']).hexdigest()
+            doc_id = hashlib.sha1(data['created_at']).hexdigest()
             return es.create(index=index, doc_type=doc_type, id=doc_id, body=data)
         except Exception as e:
             logger.error('caught error while trying to send stats to elastic'
                          'Exception: {}'.format(e.message))
-            logger.info('stats: {}'.format(stats))
+            logger.info('stats: {}'.format(data))

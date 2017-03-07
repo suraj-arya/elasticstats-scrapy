@@ -10,7 +10,7 @@ requirements = [
 
 setup(
     name='elasticstats-scrapy',
-    version='0.1.3',
+    version='0.1.5',
     description="A scrapy extension to send crawl stats to elasticsearch index.",
     author="Suraj Arya",
     author_email='suraj@loanzen.in',
